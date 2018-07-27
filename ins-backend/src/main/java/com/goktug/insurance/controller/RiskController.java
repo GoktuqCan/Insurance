@@ -25,30 +25,31 @@ public class RiskController {
 		for (Risk risk : request.getRisks()) {
 			switch (risk.getType()) {
 			case BIKE:
-				outputs.add(new Risk(risk.getType(), calculateModuleInRange(0, 3000, risk.getQuantity())));
+				outputs.add(new Risk(risk.getType(), calculateModuleInRange(0, 3000, risk.getQuantity(), 30)));
 				break;
 			case JEWELRY:
-				outputs.add(new Risk(risk.getType(), calculateModuleInRange(500, 10000, risk.getQuantity())));
+				outputs.add(new Risk(risk.getType(), calculateModuleInRange(500, 10000, risk.getQuantity(), 5)));
 				break;
 			case ELECTRONICS:
-				outputs.add(new Risk(risk.getType(), calculateModuleInRange(500, 6000, risk.getQuantity())));
+				outputs.add(new Risk(risk.getType(), calculateModuleInRange(500, 6000, risk.getQuantity(), 35)));
 				break;
 			case SPORTS:
-				outputs.add(new Risk(risk.getType(), calculateModuleInRange(0, 3000, risk.getQuantity())));
+				outputs.add(new Risk(risk.getType(), calculateModuleInRange(0, 3000, risk.getQuantity(), 30)));
 				break;
 			}
-			total = total + outputs.get(outputs.size() - 1).getQuantity();
+			if (outputs.get(outputs.size() - 1).getQuantity() > 0)
+				total = total + outputs.get(outputs.size() - 1).getQuantity();
 		}
 		return new RiskCalculateResponse(true, null, total, outputs);
 	}
 
-	private int calculateModuleInRange(int min, int max, int quantity) {
+	private int calculateModuleInRange(int min, int max, int quantity, int percentage) {
 		if (quantity >= min && quantity <= max)
-			return quantity;
+			return quantity * percentage / 100;
 		else if (quantity > max)
-			return max;
+			return max * percentage / 100;
 		else
-			return min;
+			return -1;
 	}
 
 }
